@@ -2,6 +2,7 @@ package com.kurs2.mynotes
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
@@ -24,6 +25,13 @@ class MainActivity : AppCompatActivity() {
         notes.add( Note("Парикмахер", "Сделать прическу к выпускному", "Среда", 1));
         notes.add( Note("Баскетбол", "Игра со школьной командой", "Вторник", 3));
         notes.add( Note("Магазин", "Купить новые джинсы", "Понедельник", 3));
+
+        /*Добавляем Адаптер*/
+        val notesAdapter: NotesAdapter = NotesAdapter(notes)
+        /*Укажем как распологаем элементы в RecyclerView(вертикаль, горизонталь, сетка)*/
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        /*Устанавливаем RecyclerView адаптер*/
+        recyclerView.adapter = notesAdapter
 
 
     }
