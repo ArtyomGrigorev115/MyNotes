@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 
 class NotesAdapter constructor( notes: MutableList<Note>) : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
@@ -21,7 +23,7 @@ class NotesAdapter constructor( notes: MutableList<Note>) : RecyclerView.Adapter
         val textViewTitle : TextView by lazy { itemView.findViewById(R.id.textViewTitle) }
          val textViewDescription : TextView by lazy { itemView.findViewById(R.id.textViewDescription) }
          val textViewDayOfWeek : TextView by lazy { itemView.findViewById(R.id.textViewDayOfWeek) }
-         val textViewPriority : TextView by lazy { itemView.findViewById(R.id.textViewPriority) }
+        // val textViewPriority : TextView by lazy { itemView.findViewById(R.id.textViewPriority) }
 
 
     }
@@ -38,7 +40,16 @@ class NotesAdapter constructor( notes: MutableList<Note>) : RecyclerView.Adapter
         holder.textViewTitle.text = note.title
         holder.textViewDescription.text = note.description
         holder.textViewDayOfWeek.text = note.dayOfWeek
-        holder.textViewPriority.text = note.priority.toString()
+        val colorId: Int
+        val priority: Int = note.priority
+        colorId = when(priority){
+            1 -> ResourcesCompat.getColor(holder.itemView.context.resources, android.R.color.holo_red_light, holder.itemView.context.theme)
+            2 -> ResourcesCompat.getColor(holder.itemView.context.resources, android.R.color.holo_orange_light, holder.itemView.context.theme)
+            else -> ResourcesCompat.getColor(holder.itemView.context.resources, android.R.color.holo_green_light, holder.itemView.context.theme)
+        }
+        holder.textViewTitle.setBackgroundColor(colorId)
+
+       // holder.textViewPriority.text = note.priority.toString()
 
     }
 
