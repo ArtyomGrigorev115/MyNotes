@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
 
+
+
     /*RecyclerView - отображает список заметок*/
     private val recyclerView: RecyclerView by lazy { findViewById(R.id.recyclerViewNotes) }
 
@@ -23,15 +25,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        /*заметки в спсике заметок*/
-        notes.add( Note("Парикмахер", "Сделать прическу", "Понедельник", 2));
-        notes.add( Note("Баскетбол", "Игра со школьной командой", "Вторник", 3));
-        notes.add( Note("Магазин", "Купить новые джинсы", "Понедельник", 3));
-        notes.add( Note("Стоматолог", "Вылечить зубы", "Понедельник", 2));
-        notes.add( Note("Парикмахер", "Сделать прическу к выпускному", "Среда", 1));
-        notes.add( Note("Баскетбол", "Игра со школьной командой", "Вторник", 3));
-        notes.add( Note("Магазин", "Купить новые джинсы", "Понедельник", 3));
-
+        if(notes.isEmpty()) {
+            /*заметки в спсике заметок*/
+            notes.add(Note("Парикмахер", "Сделать прическу", "Понедельник", 2));
+            notes.add(Note("Баскетбол", "Игра со школьной командой", "Вторник", 3));
+            notes.add(Note("Магазин", "Купить новые джинсы", "Понедельник", 3));
+            notes.add(Note("Стоматолог", "Вылечить зубы", "Понедельник", 2));
+            notes.add(Note("Парикмахер", "Сделать прическу к выпускному", "Среда", 1));
+            notes.add(Note("Баскетбол", "Игра со школьной командой", "Вторник", 3));
+            notes.add(Note("Магазин", "Купить новые джинсы", "Понедельник", 3));
+        }
         /*Добавляем Адаптер*/
         val notesAdapter: NotesAdapter = NotesAdapter(notes)
         /*Укажем как распологаем элементы в RecyclerView(вертикаль, горизонталь, сетка)*/
