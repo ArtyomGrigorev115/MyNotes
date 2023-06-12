@@ -1,5 +1,6 @@
 package com.kurs2.mynotes
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -11,8 +12,12 @@ class MainActivity : AppCompatActivity() {
     /*RecyclerView - отображает список заметок*/
     private val recyclerView: RecyclerView by lazy { findViewById(R.id.recyclerViewNotes) }
 
-    /*Спосок заметок*/
-    private val notes: MutableList<Note> = mutableListOf()
+
+
+    companion object{
+        /*Спосок заметок*/
+        val notes: MutableList<Note> = mutableListOf()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,5 +42,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun onclickAddNote(view: View) {}
+    fun onclickAddNote(view: View) {
+        val intent: Intent  = Intent(this, AddNoteActivity::class.java)
+        startActivity(intent)
+    }
 }
