@@ -11,6 +11,22 @@ import androidx.recyclerview.widget.RecyclerView
 class NotesAdapter constructor( notes: MutableList<Note>) : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
 
     private val notes: MutableList<Note>
+    private var _onNoteClickListener: OnNoteClickListener? = null
+    var onNoteClickListener: OnNoteClickListener? = null
+        set(value){
+            _onNoteClickListener = value
+            field = value
+        }
+
+
+
+
+    /*Интерфейс слушает шелчки на элементе
+    * position - номер позиции элемента на который нажали*/
+    interface OnNoteClickListener{
+        fun onNoteClick(position: Int): Unit
+        fun onLongClick(position: Int): Unit
+    }
 
     init{
         this.notes = notes
@@ -24,6 +40,17 @@ class NotesAdapter constructor( notes: MutableList<Note>) : RecyclerView.Adapter
          val textViewDescription : TextView by lazy { itemView.findViewById(R.id.textViewDescription) }
          val textViewDayOfWeek : TextView by lazy { itemView.findViewById(R.id.textViewDayOfWeek) }
         // val textViewPriority : TextView by lazy { itemView.findViewById(R.id.textViewPriority) }
+         init {
+             itemView.setOnClickListener(View.OnClickListener {
+                 _onNoteClickListener?.onNoteClick(adapterPosition)
+             })
+            /* добавить View слушатель долгого нажатия */
+            itemView.setOnLongClickListener {
+                onNoteClickListener?.onLongClick(adapterPosition)
+                true
+            }
+
+         }
 
 
     }
