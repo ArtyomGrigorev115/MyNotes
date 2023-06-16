@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper
 class NotesDBHelper constructor(context: Context,
                                 private val DB_NAME : String = "notes.db",
     /*factory: SQLiteDatabase.CursorFactory,*/
-                                private val DB_VERSION: Int = 1) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+                                private val DB_VERSION: Int = 2) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
 
     /*Вызывается при создании БД*/

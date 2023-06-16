@@ -66,7 +66,7 @@ class NotesAdapter constructor( notes: MutableList<Note>) : RecyclerView.Adapter
         val note: Note = notes.get(position)
         holder.textViewTitle.text = note.title
         holder.textViewDescription.text = note.description
-        holder.textViewDayOfWeek.text = note.dayOfWeek
+        holder.textViewDayOfWeek.text = Note.getDayAsString(note.dayOfWeek)
         val colorId: Int
         val priority: Int = note.priority
         colorId = when(priority){
