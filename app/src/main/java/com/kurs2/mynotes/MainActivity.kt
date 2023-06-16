@@ -1,6 +1,10 @@
 package com.kurs2.mynotes
 
+import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Intent
+import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -17,29 +21,64 @@ class MainActivity : AppCompatActivity() {
     /*RecyclerView - отображает список заметок*/
     private val recyclerView: RecyclerView by lazy { findViewById(R.id.recyclerViewNotes) }
     /*Адаптер для RecyclerView*/
-    private val notesAdapter: NotesAdapter by lazy { NotesAdapter(notes) }
-
+    private val notesAdapter: NotesAdapter by lazy { NotesAdapter(notesFromDB) }
+    /*Объект Helper для работы с БД*/
+    private val dbHelper: NotesDBHelper = NotesDBHelper(this)
 
 
     companion object{
         /*Спосок заметок*/
         val notes: MutableList<Note> = mutableListOf()
+        val notesFromDB: MutableList<Note> = mutableListOf()
     }
 
+    @SuppressLint("Range")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if(notes.isEmpty()) {
-            /*заметки в спсике заметок*/
-            notes.add(Note("Парикмахер", "Сделать прическу", "Понедельник", 2));
-            notes.add(Note("Баскетбол", "Игра со школьной командой", "Вторник", 3));
-            notes.add(Note("Магазин", "Купить новые джинсы", "Понедельник", 3));
-            notes.add(Note("Стоматолог", "Вылечить зубы", "Понедельник", 2));
-            notes.add(Note("Парикмахер", "Сделать прическу к выпускному", "Среда", 1));
-            notes.add(Note("Баскетбол", "Игра со школьной командой", "Вторник", 3));
-            notes.add(Note("Магазин", "Купить новые джинсы", "Понедельник", 3));
+        /*Создаём БД*/
+        val dataBase: SQLiteDatabase = dbHelper.writableDatabase
+
+
+
+//        if(notes.isEmpty()) {
+//            /*заметки в спсике заметок*/
+//            notes.add(Note("Парикмахер", "Сделать прическу", "Понедельник", 2));
+//            notes.add(Note("Баскетбол", "Игра со школьной командой", "Вторник", 3));
+//            notes.add(Note("Магазин", "Купить новые джинсы", "Понедельник", 3));
+//            notes.add(Note("Стоматолог", "Вылечить зубы", "Понедельник", 2));
+//            notes.add(Note("Парикмахер", "Сделать прическу к выпускному", "Среда", 1));
+//            notes.add(Note("Баскетбол", "Игра со школьной командой", "Вторник", 3));
+//            notes.add(Note("Магазин", "Купить новые джинсы", "Понедельник", 3));
+//        }
+//        /*Пишем данные в БД
+//        * данные в БД вставляются при помощи объекта классса ContentValues
+//        * у куторого нужно вызвать метод ContentValues::put("ключ", "значение")*/
+//        notes.forEach {
+//            val contentValues:ContentValues = ContentValues()
+//            contentValues.put(NotesContract.Companion.NotesEntry.COLUMN_TITLE, it.title)
+//            contentValues.put(NotesContract.Companion.NotesEntry.COLUMN_DESCRIPTION, it.description)
+//            contentValues.put(NotesContract.Companion.NotesEntry.COLUMN_DAY_OF_WEEK, it.dayOfWeek)
+//            contentValues.put(NotesContract.Companion.NotesEntry.COLUMN_PRIORITY, it.priority)
+//            /*Вставлям ContentValues в БД*/
+//            dataBase.insert(NotesContract.Companion.NotesEntry.TABLE_NAME, null, contentValues)
+//        }
+        /*Читаем данные из БД и сохраняем в новый список*/
+
+        /*Cursor хранит все значения из таблицы с именем TABLE_NAME*/
+        val cursor: Cursor = dataBase.query(NotesContract.Companion.NotesEntry.TABLE_NAME, null, null, null, null, null, null)
+        /*по порядку проходим по всем элементам от нуля, пока существуют элементы метод moveToNext возвращает true*/
+        while (cursor.moveToNext()){
+            val title: String = cursor.getString(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.COLUMN_TITLE))
+            val description: String = cursor.getString(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.COLUMN_DESCRIPTION))
+            val dayOfWeek: String = cursor.getString(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.COLUMN_DAY_OF_WEEK))
+            val priority: Int = cursor.getInt(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.COLUMN_PRIORITY))
+
+            val note: Note = Note(title, description, dayOfWeek, priority)
+            notesFromDB.add(note)
         }
+        cursor.close()
 
         /*Укажем как распологаем элементы в RecyclerView(вертикаль, горизонталь, сетка)*/
         recyclerView.layoutManager = LinearLayoutManager(this)
