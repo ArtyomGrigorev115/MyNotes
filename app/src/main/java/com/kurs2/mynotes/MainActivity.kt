@@ -24,10 +24,13 @@ class MainActivity : AppCompatActivity() {
     /*Адаптер для RecyclerView*/
     private val notesAdapter: NotesAdapter by lazy { NotesAdapter(notes) }
     /*Объект Helper для работы с БД*/
-    private val dbHelper: NotesDBHelper = NotesDBHelper(this)
+  //  private val dbHelper: NotesDBHelper = NotesDBHelper(this)
 
     /*Создаём БД*/
-    val dataBase: SQLiteDatabase by lazy { dbHelper.writableDatabase }
+  //  val dataBase: SQLiteDatabase by lazy { dbHelper.writableDatabase }
+
+    /*Room DB*/
+    private val database: NotesDatabase by lazy { NotesDatabase.getInstance(this) }
 
 
     companion object{
@@ -88,9 +91,10 @@ class MainActivity : AppCompatActivity() {
 //            notes.add(note)
 //        }
 //        cursor.close()
-        getData()
+      //  getData()
         /*Укажем как распологаем элементы в RecyclerView(вертикаль, горизонталь, сетка)*/
         recyclerView.layoutManager = LinearLayoutManager(this)
+        getData()
         /*Устанавливаем RecyclerView адаптер*/
         recyclerView.adapter = notesAdapter
         /*установим слушатель у адаптера
@@ -127,11 +131,14 @@ class MainActivity : AppCompatActivity() {
 
     }
     fun remove(position: Int): Unit{
-        val id: Int = notes.get(position).id
-        val where: String = "${NotesContract.Companion.NotesEntry.id} = ?"
-        val whereArgs: Array<String> = arrayOf(id.toString())
-        dataBase.delete(NotesContract.Companion.NotesEntry.TABLE_NAME, where, whereArgs)
+//        val id: Int = notes.get(position).id
+//        val where: String = "${NotesContract.Companion.NotesEntry.id} = ?"
+//        val whereArgs: Array<String> = arrayOf(id.toString())
+     //   dataBase.delete(NotesContract.Companion.NotesEntry.TABLE_NAME, where, whereArgs)
        // notes.removeAt(position)
+      //  getData()
+        val note: Note = notes.get(position)
+        database.notesDao().deleteNote(note)
         getData()
         notesAdapter.notifyDataSetChanged()
     }
@@ -141,29 +148,35 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    @SuppressLint("Range")
-    private fun getData(): Unit{
+    private fun getData(){
+        val notesFromDb: List<Note> = database.notesDao().getAllNotes()
         notes.clear()
-        /*Вывести заметки с конкретным приоритетом*/
-        val selection: String = "${NotesContract.Companion.NotesEntry.COLUMN_PRIORITY} < ?"
-        val selectionArgs: Array<String> = arrayOf("2")
-        /*Вывести заметки с конкретным приоритетом*/
-        val selectionDayOfWeek: String = "${NotesContract.Companion.NotesEntry.COLUMN_DAY_OF_WEEK} == ?"
-        val selectionArgsDayOfWeek: Array<String> = arrayOf("1")
-
-        /*Cursor хранит все значения из таблицы с именем TABLE_NAME*/
-        val cursor: Cursor = dataBase.query(NotesContract.Companion.NotesEntry.TABLE_NAME, null, null/*selection*/, null/*selectionArgs*/, null, null, NotesContract.Companion.NotesEntry.COLUMN_DAY_OF_WEEK)
-        /*по порядку проходим по всем элементам от нуля, пока существуют элементы метод moveToNext возвращает true*/
-        while (cursor.moveToNext()){
-            val id: Int = cursor.getInt(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.id))
-            val title: String = cursor.getString(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.COLUMN_TITLE))
-            val description: String = cursor.getString(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.COLUMN_DESCRIPTION))
-            val dayOfWeek: Int = cursor.getInt(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.COLUMN_DAY_OF_WEEK))
-            val priority: Int = cursor.getInt(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.COLUMN_PRIORITY))
-
-            val note: Note = Note(title, description, dayOfWeek, priority, id)
-            notes.add(note)
-        }
-        cursor.close()
+        notes.addAll(notesFromDb)
     }
+
+//    @SuppressLint("Range")
+//    private fun getData(): Unit{
+//        notes.clear()
+//        /*Вывести заметки с конкретным приоритетом*/
+//        val selection: String = "${NotesContract.Companion.NotesEntry.COLUMN_PRIORITY} < ?"
+//        val selectionArgs: Array<String> = arrayOf("2")
+//        /*Вывести заметки с конкретным приоритетом*/
+//        val selectionDayOfWeek: String = "${NotesContract.Companion.NotesEntry.COLUMN_DAY_OF_WEEK} == ?"
+//        val selectionArgsDayOfWeek: Array<String> = arrayOf("1")
+//
+//        /*Cursor хранит все значения из таблицы с именем TABLE_NAME*/
+//      //  val cursor: Cursor = dataBase.query(NotesContract.Companion.NotesEntry.TABLE_NAME, null, null/*selection*/, null/*selectionArgs*/, null, null, NotesContract.Companion.NotesEntry.COLUMN_DAY_OF_WEEK)
+//        /*по порядку проходим по всем элементам от нуля, пока существуют элементы метод moveToNext возвращает true*/
+//        while (cursor.moveToNext()){
+//            val id: Int = cursor.getInt(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.id))
+//            val title: String = cursor.getString(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.COLUMN_TITLE))
+//            val description: String = cursor.getString(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.COLUMN_DESCRIPTION))
+//            val dayOfWeek: Int = cursor.getInt(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.COLUMN_DAY_OF_WEEK))
+//            val priority: Int = cursor.getInt(cursor.getColumnIndex(NotesContract.Companion.NotesEntry.COLUMN_PRIORITY))
+//
+//            val note: Note = Note(title, description, dayOfWeek, priority, id)
+//            notes.add(note)
+//        }
+//        cursor.close()
+//    }
 }
