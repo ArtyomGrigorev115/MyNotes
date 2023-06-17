@@ -22,7 +22,7 @@ abstract class NotesDatabase : RoomDatabase() {
                 if (database == null) {
                     database =
                         Room.databaseBuilder(context, NotesDatabase::class.java, DB_NAME)
-                            .allowMainThreadQueries() /*Удалить*/
+                           // .allowMainThreadQueries() /*Удалить*/
                             .build()
                 }
             }

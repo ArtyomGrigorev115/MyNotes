@@ -1,5 +1,6 @@
 package com.kurs2.mynotes
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -10,7 +11,7 @@ interface NotesDao {
     /*Метод получает все заметки из БД
     * Вызывается при запросе к БД*/
     @Query("SELECT * FROM notes ORDER BY dayOfWeek ASC")
-    fun getAllNotes(): List<Note>
+    fun getAllNotes(): LiveData<List<Note>>
 
     @Insert
     fun insertNote(note: Note): Unit

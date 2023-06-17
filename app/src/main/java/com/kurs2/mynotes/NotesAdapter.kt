@@ -10,7 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 
 class NotesAdapter constructor( notes: MutableList<Note>) : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
 
-    private val notes: MutableList<Note>
+    private var notes: MutableList<Note>
+
+    fun setNotes(notes: MutableList<Note>): Unit{
+        this.notes = notes
+        notifyDataSetChanged()
+    }
+    fun getNotes() : MutableList<Note> = notes
+
+
     private var _onNoteClickListener: OnNoteClickListener? = null
     var onNoteClickListener: OnNoteClickListener? = null
         set(value){

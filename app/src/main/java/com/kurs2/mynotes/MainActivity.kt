@@ -11,6 +11,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,7 +32,10 @@ class MainActivity : AppCompatActivity() {
   //  val dataBase: SQLiteDatabase by lazy { dbHelper.writableDatabase }
 
     /*Room DB*/
-    private val database: NotesDatabase by lazy { NotesDatabase.getInstance(this) }
+   // private val database: NotesDatabase by lazy { NotesDatabase.getInstance(this) }
+
+    /*MainViewModel*/
+    val viewModel: MainViewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
 
 
     companion object{
@@ -137,10 +142,11 @@ class MainActivity : AppCompatActivity() {
      //   dataBase.delete(NotesContract.Companion.NotesEntry.TABLE_NAME, where, whereArgs)
        // notes.removeAt(position)
       //  getData()
-        val note: Note = notes.get(position)
-        database.notesDao().deleteNote(note)
-        getData()
-        notesAdapter.notifyDataSetChanged()
+        val note: Note = notesAdapter.getNotes().get(position)
+       // database.notesDao().deleteNote(note)
+      //  getData()
+      //  notesAdapter.notifyDataSetChanged()
+        viewModel.deleteNote(note)
     }
 
     fun onclickAddNote(view: View) {
@@ -149,9 +155,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getData(){
-        val notesFromDb: List<Note> = database.notesDao().getAllNotes()
-        notes.clear()
-        notes.addAll(notesFromDb)
+        /*Теперь этот объект просматривается.
+        * В случае возникновения изменений в БД, БД сообщит об этих изменениях*/
+        //val notesFromDb: LiveData<List<Note>> = database.notesDao().getAllNotes()
+        val notesFromDb: LiveData<List<Note>> = viewModel.getNotes()
+        notesFromDb.observe(this,{notesFromLiveData  ->
+//            notes.clear()
+//            notes.addAll(notesFromLiveData)
+//            notesAdapter.notifyDataSetChanged()
+           // val mutList: MutableList<Note> = notesFromLiveData.toMutableList()
+            notesAdapter.setNotes(notesFromLiveData.toMutableList())
+
+        })
+      //  notes.clear()
+      //  notes.addAll(notesFromDb)
     }
 
 //    @SuppressLint("Range")

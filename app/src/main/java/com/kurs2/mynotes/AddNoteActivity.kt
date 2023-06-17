@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
+import androidx.lifecycle.ViewModelProviders
 import com.kurs2.mynotes.databinding.ActivityAddNoteBinding
 
 class AddNoteActivity : AppCompatActivity() {
@@ -16,7 +17,9 @@ class AddNoteActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddNoteBinding
 //    private val dbHelper: NotesDBHelper by lazy { NotesDBHelper(this) }
 //    private val database: SQLiteDatabase by lazy { dbHelper.writableDatabase }
-    private val database: NotesDatabase by lazy { NotesDatabase.getInstance(this) }
+//    private val database: NotesDatabase by lazy { NotesDatabase.getInstance(this) }
+/*MainViewModel*/
+val viewModel: MainViewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +68,8 @@ class AddNoteActivity : AppCompatActivity() {
 //        }
         if(isFilled(title,description)){
             val note: Note = Note(title, description, dayOfWeek, priority)
-            database.notesDao().insertNote(note)
+           // database.notesDao().insertNote(note)
+            viewModel.insertNote(note)
             val intent: Intent = Intent(this, MainActivity::class.java)
            startActivity(intent)
         }
